@@ -20,6 +20,8 @@ func main() {
 	fmt.Println(myArguments("Chera Mihiretu ", 21, " M "))
 
 	fmt.Println(diddiriirsoo(12374))
+
+	fmt.Println(namingReturn())
 }
 
 // math random generator
@@ -45,5 +47,13 @@ func diddiriirsoo(number int) (tenth, hundredth, thausands int) {
 	tenth = number % 10
 	hundredth = number % 100 / 10
 	thausands = number % 1000 / 100
+	return
+}
+
+func namingReturn() (x, y, z int) {
+	x = 10
+	y = 20
+	z = 30
+
 	return
 }
