@@ -1,10 +1,24 @@
 package main
 
+/*
+The Task is to create a Console application that enables Student add their Subjects
+and the application will Calculate the Average.
+*/
 import (
 	"fmt"
 	"strconv"
 	"unicode"
 )
+
+/*
+Here we Need A student TO hold all the datas
+
+ID : this is the Id of the student
+Name : Name of single student
+Subjects : will Subject : Score pairings
+Average:the calculated average will be here
+
+*/
 
 type Student struct {
 	ID       int
@@ -13,12 +27,15 @@ type Student struct {
 	Average  int
 }
 
+// This method calculates the average of the student
 func (s *Student) CalculateAverage() {
 	for _, value := range s.Subjects {
 		s.Average += value
 	}
+	s.Average /= len(s.Subjects)
 }
 
+// This will the return the header of the table of the student score board
 func (s *Student) Header() (int, string) {
 	maxSubjectLength := 0
 	for subjects := range s.Subjects {
@@ -30,6 +47,8 @@ func (s *Student) Header() (int, string) {
 	return maxSubjectLength, fmt.Sprintf("%-*s %-10s", maxSubjectLength+4, "Subjects", "Scores")
 }
 
+// This displays all the subjects along with their average
+
 func (s *Student) Display() {
 	fmt.Println(s.Name)
 	n, result := s.Header()
@@ -40,12 +59,16 @@ func (s *Student) Display() {
 		row := fmt.Sprintf("%-*s : %-10d", n, subject, score)
 		fmt.Println(row)
 	}
+	row := fmt.Sprintf("%-*s : %-10d", n, "Average", s.Average)
+	fmt.Println(row)
 }
 
 func main() {
+	// hold list of student incase we might wanted to save them for later
 	students := make([]Student, 0)
 
 	for {
+		// grabing students info
 		var nameHolder string
 		fmt.Print("Enter Your Name : ")
 		for fmt.Scan(&nameHolder); containInteger(nameHolder); {
@@ -54,6 +77,7 @@ func main() {
 		students = append(students, Student{})
 		last_index := len(students) - 1
 		students[last_index].Name = nameHolder
+		students[last_index].ID = last_index
 		students[last_index].Subjects = make(map[string]int)
 
 		fmt.Println("Enter The SubjectName and Score. eg: Math 98, Enter -1 to finish")
