@@ -23,8 +23,8 @@ type LibraryService struct {
 	BookStatus  []string
 }
 
-func NewLibraryService() LibraryService {
-	return LibraryService{
+func NewLibraryService() *LibraryService {
+	return &LibraryService{
 		BookID:      -1,
 		MemberID:    -1,
 		BooksList:   make(map[int]models.Book),
