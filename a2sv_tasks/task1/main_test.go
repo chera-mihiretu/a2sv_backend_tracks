@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-func AveraegeCalculate(t *testing.T) {
+func TestAveraegeCalculate(t *testing.T) {
 
 	ss := map[string]int{
 		"Math":      90,
@@ -14,7 +14,7 @@ func AveraegeCalculate(t *testing.T) {
 		"Geography": 92,
 	}
 
-	expected := 84.4
+	expected := 84
 	var student_test Student
 
 	student_test.Subjects = ss
@@ -22,7 +22,7 @@ func AveraegeCalculate(t *testing.T) {
 
 	actual := student_test.Average
 
-	if actual == int(expected) {
+	if actual != expected {
 		t.Errorf("Average = %v; Expected %v", actual, expected)
 	}
 }
