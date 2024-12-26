@@ -47,7 +47,7 @@ func (ls *LibraryService) AddMember(member models.Member) int {
 }
 
 func (ls *LibraryService) RemoveBook(id int) error {
-	if _, ok := ls.BooksList[id]; !ok {
+	if _, ok := ls.BooksList[id]; !ok || ls.BooksList[id].Status == ls.BookStatus[1] {
 		return errors.New("no book found with the given id")
 	}
 	delete(ls.BooksList, id)

@@ -77,7 +77,7 @@ func (lc *LibraryController) RemoveBook() {
 
 	removeError := lc.LibraryServiceInstance.RemoveBook(bookID)
 	if removeError != nil {
-		fmt.Println("Look like the book you entered Does not exists")
+		fmt.Println("Look like the book you entered Does not exists or Borrowed")
 		return
 	}
 
@@ -126,16 +126,16 @@ func (lc *LibraryController) ReturnBook(memberID int) {
 
 func (lc *LibraryController) ListAvailableBooks() {
 	books := lc.LibraryServiceInstance.ListAvailableBooks()
-	fmt.Printf("%-5s %-20s %-20s %-20s", "ID", "TITLE", "AUTHOR", "STATUS")
+	fmt.Printf("%-5s %-20s %-20s %-20s \n", "ID", "TITLE", "AUTHOR", "STATUS")
 	for id, book := range books {
-		fmt.Printf("%-5d %-20s %-20s %-20s", id, book.Title, book.Author, book.Status)
+		fmt.Printf("%-5d %-20s %-20s %-20s \n", id, book.Title, book.Author, book.Status)
 	}
 }
 
 func (lc *LibraryController) ListBorrowedBooks(memberID int) {
 	books := lc.LibraryServiceInstance.ListBorrowedBooks(memberID)
-	fmt.Printf("%-5s %-20s %-20s %-20s", "ID", "TITLE", "AUTHOR", "STATUS")
+	fmt.Printf("%-5s %-20s %-20s %-20s \n", "ID", "TITLE", "AUTHOR", "STATUS")
 	for id, book := range books {
-		fmt.Printf("%-5d %-20s %-20s %-20s", id, book.Title, book.Author, book.Status)
+		fmt.Printf("%-5d %-20s %-20s %-20s\n", id, book.Title, book.Author, book.Status)
 	}
 }
