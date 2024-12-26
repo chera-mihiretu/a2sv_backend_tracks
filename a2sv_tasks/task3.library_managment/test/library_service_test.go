@@ -46,12 +46,12 @@ func TestLibraryService_AddMember(t *testing.T) {
 		0: {
 			ID:            0,
 			Name:          "Chera Mihiretu",
-			BorrowedBooks: make(map[int]models.Book),
+			BorrowedBooks: make(map[int]bool),
 		},
 		1: {
 			ID:            1,
 			Name:          "Chera Mihiretu",
-			BorrowedBooks: make(map[int]models.Book),
+			BorrowedBooks: make(map[int]bool),
 		},
 	}
 
@@ -119,7 +119,7 @@ func TestLibraryService_BorrowBook(t *testing.T) {
 	member := models.Member{
 		ID:            0,
 		Name:          "Chera Mihiretu",
-		BorrowedBooks: make(map[int]models.Book),
+		BorrowedBooks: make(map[int]bool),
 	}
 	libraryService.AddMember(member)
 
@@ -141,7 +141,7 @@ func TestLibraryService_BorrowBook(t *testing.T) {
 	if libraryService.BooksList[0].Status != libraryService.BookStatus[1] {
 		t.Errorf("Expected book status to be 'borrowed', but got %v", libraryService.BooksList[0].Status)
 	}
-	if libraryService.MembersList[0].BorrowedBooks[0] != libraryService.BooksList[0] {
+	if libraryService.MembersList[0].BorrowedBooks[0] == false {
 		t.Errorf("Expected member to have borrowed book, but got none")
 	}
 }
@@ -160,7 +160,7 @@ func TestLibraryService_ReturnBook(t *testing.T) {
 	member := models.Member{
 		ID:            0,
 		Name:          "Chera Mihiretu",
-		BorrowedBooks: make(map[int]models.Book),
+		BorrowedBooks: make(map[int]bool),
 	}
 	libraryService.AddMember(member)
 

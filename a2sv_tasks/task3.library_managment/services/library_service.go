@@ -39,10 +39,11 @@ func (ls *LibraryService) AddBook(book models.Book) {
 	ls.BooksList[ls.BookID] = book
 }
 
-func (ls *LibraryService) AddMember(member models.Member) {
+func (ls *LibraryService) AddMember(member models.Member) int {
 	ls.MemberID++
 	member.ID = ls.MemberID
 	ls.MembersList[ls.MemberID] = member
+	return member.ID
 }
 
 func (ls *LibraryService) RemoveBook(id int) error {
@@ -71,7 +72,7 @@ func (ls *LibraryService) BorrowBook(bookID, memberID int) error {
 	ls.BooksList[bookID] = book
 
 	member := ls.MembersList[memberID]
-	member.BorrowedBooks[bookID] = book
+	member.BorrowedBooks[bookID] = true
 	ls.MembersList[memberID] = member
 
 	return nil
@@ -97,4 +98,17 @@ func (ls *LibraryService) ReturnBook(bookID, memeberID int) error {
 	ls.BooksList[bookID] = book
 
 	return nil
+}
+
+func (ls *LibraryService) ListAvailableBooks() map[int]models.Book {
+	return ls.BooksList
+}
+
+func (ls *LibraryService) ListBorrowedBooks(memberID int) map[int]models.Book {
+	book := make(map[int]models.Book)
+
+	for key := range ls.MembersList[memberID].BorrowedBooks {
+		book[key] = ls.BooksList[key]
+	}
+	return book
 }
