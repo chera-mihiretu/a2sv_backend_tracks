@@ -1,4 +1,4 @@
-module github/chera/task_manager_api
+module github/cheramihiretu/task_manager_api
 
 go 1.22.9
 
