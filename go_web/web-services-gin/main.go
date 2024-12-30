@@ -28,7 +28,7 @@ func main() {
 }
 
 func getAlbums(c *gin.Context) {
-	c.IndentedJSON(http.StatusOK, album)
+	c.IndentedJSON(http.StatusOK, album) // returns the responce
 }
 
 func postAlbum(c *gin.Context) {
