@@ -27,7 +27,7 @@ func main() {
 	router.DELETE("tasks/:id", deleteTask)
 
 	// to add new task, accepts JSON
-	router.PUT("/tasks", nil)
+	router.POST("/tasks", createTask)
 
 	router.Run()
 }
@@ -106,4 +106,17 @@ func deleteTask(c *gin.Context) {
 			return
 		}
 	}
+}
+
+func createTask(c *gin.Context) {
+	var new_task models.Task
+
+	if err := c.BindJSON(&new_task); err != nil {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+	}
+
+	tasks = append(tasks, new_task)
+
+	c.IndentedJSON(http.StatusCreated, gin.H{"message": "task created succesfully"})
+
 }
