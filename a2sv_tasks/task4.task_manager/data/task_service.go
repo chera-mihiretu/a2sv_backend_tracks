@@ -1,8 +1,9 @@
-package services
+package data
 
 import (
 	"encoding/csv"
 	"errors"
+	"fmt"
 	"github/chera/task_manager/models"
 	"os"
 	"strconv"
@@ -22,6 +23,35 @@ type TaskManager interface {
 type TaskService struct {
 	ID       int
 	AllTasks map[int]models.Tasks
+}
+
+func writeFile(t *TaskService) error {
+	file, err := os.Create("task.csv")
+
+	if err != nil {
+		return errors.New("cant write the fild")
+	}
+
+	defer file.Close()
+
+	writer := csv.NewWriter(file)
+
+	for _, element := range t.AllTasks {
+		row := []string{
+			fmt.Sprintf("%v", element.ID),
+			fmt.Sprintf("%v", element.Title),
+			fmt.Sprintf("%v", element.Description),
+			fmt.Sprintf("%v", element.Status),
+			fmt.Sprintf("%v", element.CreatedAt),
+			fmt.Sprintf("%v", element.UpdatedAt),
+		}
+		if err := writer.Write(row); err != nil {
+			return errors.New("couldn't write all the data")
+		}
+	}
+
+	writer.Flush()
+	return nil
 }
 
 // file existance check
@@ -46,22 +76,26 @@ func (t *TaskService) OpenFile() error {
 		}
 		defer file.Close()
 	} else {
-		file, err := os.Open("task.csv")
+		file, err = os.OpenFile("task.csv", os.O_RDWR, 0644)
 		if err != nil {
 			return err
 		}
+
 		defer file.Close()
 	}
 
 	reader := csv.NewReader(file)
+
 	rows, err := reader.ReadAll()
+
 	if err != nil {
 		return err
 	}
-	layout := "2006-01-02 15:04:05.999999999 -0700 MST m=+0.000000000"
+	layout := "2006-01-02 15:04:05 -0700 MST"
 	for _, row := range rows {
 
 		id, _ := strconv.Atoi(row[0])
+
 		createdAt, err_time := time.Parse(layout, row[4])
 		updatedAt, err_time_1 := time.Parse(layout, row[5])
 		if err_time != nil || err_time_1 != nil {
@@ -76,7 +110,9 @@ func (t *TaskService) OpenFile() error {
 			UpdatedAt:   updatedAt,
 		}
 	}
+
 	t.ID += len(rows)
+
 	return nil
 }
 
@@ -84,9 +120,9 @@ func (t *TaskService) OpenFile() error {
 func (t *TaskService) AddTask(task models.Tasks) error {
 	task.ID = t.ID
 	t.AllTasks[t.ID] = task
-
 	t.ID++
-	return nil
+
+	return writeFile(t)
 }
 
 // TaskService struct that remove task and also write to file
@@ -101,7 +137,7 @@ func (t *TaskService) RemoveTask(id int) error {
 
 	delete(t.AllTasks, t.ID)
 
-	return nil
+	return writeFile(t)
 }
 
 // TaskService struct that update task, and also write to file
@@ -128,7 +164,7 @@ func (t *TaskService) UpdateTask(task models.Tasks) error {
 
 	t.AllTasks[new_task.ID] = new_task
 
-	return nil
+	return writeFile(t)
 }
 
 // TaskService struct that get task by id and also write to file

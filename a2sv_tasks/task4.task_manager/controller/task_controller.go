@@ -1,7 +1,7 @@
 package controller
 
 import (
-	services "github/chera/task_manager/data"
+	"github/chera/task_manager/data"
 	"github/chera/task_manager/models"
 	"net/http"
 	"strconv"
@@ -20,7 +20,7 @@ type TaskControllerInterface interface {
 
 // the struct wich is going to implement the interface
 type TaskController struct {
-	TaskService *services.TaskService
+	TaskService *data.TaskService
 }
 
 func (tc *TaskController) OpenFile() error {
@@ -31,7 +31,7 @@ func (tc *TaskController) OpenFile() error {
 // the function that returns the struct
 func NewTaskController() *TaskController {
 	return &TaskController{
-		TaskService: services.NewTaskService(),
+		TaskService: data.NewTaskService(),
 	}
 }
 
