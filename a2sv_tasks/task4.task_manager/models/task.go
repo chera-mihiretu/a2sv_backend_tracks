@@ -4,7 +4,7 @@ import (
 	"time"
 )
 
-type Taks struct {
+type Tasks struct {
 	ID          int       `json:"id"`
 	Title       string    `json:"title"`
 	Description string    `json:"description"`
