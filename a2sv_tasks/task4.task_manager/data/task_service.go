@@ -2,6 +2,7 @@ package data
 
 import (
 	"context"
+	"fmt"
 	"github/chera/task_manager/models"
 	"time"
 
@@ -49,7 +50,7 @@ func (t *TaskService) RemoveTask(id string) error {
 		return err
 	}
 
-	_, err = t.Collection.DeleteOne(context.Background(), bson.M{"_id": taskID})
+	_, err = t.Collection.DeleteOne(context.Background(), bson.M{"id": taskID})
 	if err != nil {
 		return err
 	}
@@ -60,17 +61,15 @@ func (t *TaskService) RemoveTask(id string) error {
 func (t *TaskService) UpdateTask(task models.Tasks) (models.Tasks, error) {
 
 	// check if the data exist
-
 	taskID, err := primitive.ObjectIDFromHex(task.ID.Hex())
 	if err != nil {
 		return models.Tasks{}, err
 	}
 	var old_task models.Tasks
-	err = t.Collection.FindOne(context.Background(), bson.M{"_id": taskID}).Decode(&old_task)
+	err = t.Collection.FindOne(context.TODO(), bson.D{{Key: "id", Value: taskID}}).Decode(&old_task)
 	if err != nil {
 		return models.Tasks{}, err
 	}
-
 	if task.Title == "" {
 		task.Title = old_task.Title
 	}
@@ -80,7 +79,7 @@ func (t *TaskService) UpdateTask(task models.Tasks) (models.Tasks, error) {
 	if task.Status == "" {
 		task.Status = old_task.Status
 	}
-
+	fmt.Println(time.Now())
 	update := bson.M{
 		"$set": bson.M{
 			"title":       task.Title,
@@ -90,7 +89,7 @@ func (t *TaskService) UpdateTask(task models.Tasks) (models.Tasks, error) {
 		},
 	}
 
-	_, err = t.Collection.UpdateOne(context.Background(), bson.M{"_id": taskID}, update)
+	_, err = t.Collection.UpdateOne(context.TODO(), bson.D{{Key: "id", Value: taskID}}, update)
 
 	if err != nil {
 		return models.Tasks{}, err
@@ -106,7 +105,7 @@ func (t *TaskService) GetTask(taskID string) (models.Tasks, error) {
 		return models.Tasks{}, err
 	}
 	var task models.Tasks
-	err = t.Collection.FindOne(context.Background(), bson.M{"_id": taskIDHex}).Decode(&task)
+	err = t.Collection.FindOne(context.TODO(), bson.D{{Key: "id", Value: taskIDHex}}).Decode(&task)
 	if err != nil {
 		return models.Tasks{}, err
 	}

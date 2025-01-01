@@ -12,8 +12,10 @@ func Routers(collection *mongo.Collection) {
 	taskController := controller.NewTaskController(collection)
 
 	router.GET("/tasks", taskController.GetTasks)
+	router.GET("/tasks/:id", taskController.GetTasks)
+
 	router.POST("/tasks", taskController.AddTask)
 	router.DELETE("/tasks/:id", taskController.RemoveTask)
-	router.PUT("/tasks/:id", taskController.UpdateTask)
+	router.PUT("/tasks", taskController.UpdateTask)
 	router.Run()
 }

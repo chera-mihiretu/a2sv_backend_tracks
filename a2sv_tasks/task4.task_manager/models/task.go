@@ -7,7 +7,7 @@ import (
 )
 
 type Tasks struct {
-	ID          primitive.ObjectID `json:"id"`
+	ID          primitive.ObjectID `json:"_id"`
 	Title       string             `json:"title"`
 	Description string             `json:"description"`
 	Status      string             `json:"status"`

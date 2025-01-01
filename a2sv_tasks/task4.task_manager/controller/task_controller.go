@@ -69,6 +69,13 @@ func (tc *TaskController) UpdateTask(c *gin.Context) {
 		})
 		return
 	}
+
+	if task.ID.IsZero() {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{
+			"message": "ID is required",
+		})
+		return
+	}
 	result, err := tc.TaskService.UpdateTask(task)
 	if err != nil {
 		c.IndentedJSON(http.StatusNotFound, gin.H{
