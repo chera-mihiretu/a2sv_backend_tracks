@@ -4,13 +4,12 @@ import (
 	"github/chera/task_manager/data"
 	"github/chera/task_manager/models"
 	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type TaskControllerInterface interface {
-	OpenFile() error
 	AddTask() error
 	RemoveTask() error
 	UpdateTask() error
@@ -23,15 +22,10 @@ type TaskController struct {
 	TaskService *data.TaskService
 }
 
-func (tc *TaskController) OpenFile() error {
-	return tc.TaskService.OpenFile()
-
-}
-
 // the function that returns the struct
-func NewTaskController() *TaskController {
+func NewTaskController(collection *mongo.Collection) *TaskController {
 	return &TaskController{
-		TaskService: data.NewTaskService(),
+		TaskService: data.NewTaskService(collection),
 	}
 }
 
@@ -41,33 +35,24 @@ func (tc *TaskController) AddTask(c *gin.Context) {
 
 	if err := c.BindJSON(&task); err != nil {
 		c.IndentedJSON(http.StatusBadRequest, gin.H{
-			"message": "bad json body",
+			"message": "bad request",
 		})
 		return
 	}
-
-	if err := tc.TaskService.AddTask(task); err != nil {
+	result, err := tc.TaskService.AddTask(task)
+	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{
-			"message": err,
+			"message": err.Error(),
 		})
 		return
 	}
-	c.IndentedJSON(http.StatusOK, gin.H{
-		"message": "Written Succesfully",
-	})
+	c.IndentedJSON(http.StatusOK, result)
 }
 
 // the functions that implement the interface
 func (tc *TaskController) RemoveTask(c *gin.Context) {
 	id := c.Param("id")
-	int_id, err := strconv.Atoi(id)
-	if err != nil {
-		c.IndentedJSON(http.StatusBadRequest, gin.H{
-			"message": "Invalid id",
-		})
-	}
-
-	if err := tc.TaskService.RemoveTask(int_id); err != nil {
+	if err := tc.TaskService.RemoveTask(id); err != nil {
 		c.IndentedJSON(http.StatusNotFound, gin.H{
 			"message": err.Error(),
 		})
@@ -84,21 +69,37 @@ func (tc *TaskController) UpdateTask(c *gin.Context) {
 		})
 		return
 	}
-
-	if err := tc.TaskService.UpdateTask(task); err != nil {
+	result, err := tc.TaskService.UpdateTask(task)
+	if err != nil {
 		c.IndentedJSON(http.StatusNotFound, gin.H{
 			"message": err.Error(),
 		})
+		return
 	}
-	c.IndentedJSON(http.StatusOK, gin.H{"message": "updated succesfully"})
+	c.IndentedJSON(http.StatusOK, result)
 }
 
 // the functions that implement the interface
-func (tc *TaskController) GetTask() models.Tasks {
-	return models.Tasks{}
+func (tc *TaskController) GetTask(c *gin.Context) {
+	id := c.Param("id")
+	result, err := tc.TaskService.GetTask(id)
+	if err != nil {
+		c.IndentedJSON(http.StatusNotFound, gin.H{
+			"message": err.Error(),
+		})
+		return
+	}
+	c.IndentedJSON(http.StatusOK, result)
 }
 
 // the functions that implement the interface
 func (tc *TaskController) GetTasks(c *gin.Context) {
-	c.IndentedJSON(http.StatusOK, tc.TaskService.GetTasks())
+	result, err := tc.TaskService.GetTasks()
+	if err != nil {
+		c.IndentedJSON(http.StatusNotFound, gin.H{
+			"message": err.Error(),
+		})
+		return
+	}
+	c.IndentedJSON(http.StatusOK, result)
 }

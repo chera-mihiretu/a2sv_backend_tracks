@@ -1,19 +1,16 @@
 package router
 
 import (
-	"fmt"
 	"github/chera/task_manager/controller"
 
 	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func Routers() {
+func Routers(collection *mongo.Collection) {
 	router := gin.Default()
-	taskController := controller.NewTaskController()
-	err := taskController.OpenFile()
-	if err != nil {
-		fmt.Println(err)
-	}
+	taskController := controller.NewTaskController(collection)
+
 	router.GET("/tasks", taskController.GetTasks)
 	router.POST("/tasks", taskController.AddTask)
 	router.DELETE("/tasks/:id", taskController.RemoveTask)
