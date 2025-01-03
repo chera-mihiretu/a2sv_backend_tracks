@@ -8,9 +8,9 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func Routers(collection *mongo.Collection) {
+func Routers(taskCollection, userCollection *mongo.Collection) {
 	router := gin.Default()
-	taskController := controller.NewTaskController(collection)
+	taskController := controller.NewTaskController(taskCollection, userCollection)
 	myMiddleWare := middleware.NewMiddleWare()
 	router.GET("/tasks", myMiddleWare.CheckValidity("user"), taskController.GetTasks)
 	router.GET("/tasks/:id", myMiddleWare.CheckValidity("user"), taskController.GetTasks)

@@ -13,16 +13,16 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func connectDB() (mongo.Collection, error) {
+func connectDB() (mongo.Collection, mongo.Collection, error) {
 	// Connect to database
-	var collection mongo.Collection
+	var taskCollection, userCollection mongo.Collection
 	clientOoption := options.Client().ApplyURI(os.Getenv("MONGO_URI"))
 
 	client, err := mongo.Connect(context.Background(), clientOoption)
 
 	if err != nil {
 
-		return collection, err
+		return taskCollection, userCollection, err
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -33,14 +33,14 @@ func connectDB() (mongo.Collection, error) {
 
 	if err != nil {
 
-		return collection, err
+		return taskCollection, userCollection, err
 	}
 
 	// Connect to collection
-	collection = *client.Database(os.Getenv("DATABSE_NAME")).Collection(os.Getenv("COLLECTION_NAME_TASK"))
-
+	taskCollection = *client.Database(os.Getenv("DATABASE_NAME")).Collection(os.Getenv("COLLECTION_NAME_TASK"))
+	userCollection = *client.Database(os.Getenv("DATABASE_NAME")).Collection(os.Getenv("COLLECTION_NAME_USER"))
 	fmt.Println("Database connected")
-	return collection, nil
+	return taskCollection, userCollection, nil
 }
 
 func main() {
@@ -49,9 +49,9 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 
-	collections, err := connectDB()
+	taskCollection, userCollection, err := connectDB()
 	if err != nil {
 		log.Fatalf("error connecting to database %v", err.Error())
 	}
-	router.Routers(&collections)
+	router.Routers(&taskCollection, &userCollection)
 }

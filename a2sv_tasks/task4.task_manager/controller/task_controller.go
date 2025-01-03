@@ -9,23 +9,17 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-type TaskControllerInterface interface {
-	AddTask() error
-	RemoveTask() error
-	UpdateTask() error
-	GetTask() models.Tasks
-	GetTasks()
-}
-
 // the struct wich is going to implement the interface
 type TaskController struct {
 	TaskService *data.TaskService
+	UserService *data.UserService
 }
 
 // the function that returns the struct
-func NewTaskController(collection *mongo.Collection) *TaskController {
+func NewTaskController(taskCollection, userCollection *mongo.Collection) *TaskController {
 	return &TaskController{
-		TaskService: data.NewTaskService(collection),
+		TaskService: data.NewTaskService(taskCollection),
+		UserService: data.NewUserService(userCollection),
 	}
 }
 
@@ -109,4 +103,12 @@ func (tc *TaskController) GetTasks(c *gin.Context) {
 		return
 	}
 	c.IndentedJSON(http.StatusOK, result)
+}
+
+func (tc *TaskController) RegisterUser(c *gin.Context) {
+
+}
+
+func (tc *TaskController) LoginUser(c *gin.Context) {
+
 }
