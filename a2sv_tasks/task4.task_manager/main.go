@@ -37,7 +37,7 @@ func connectDB() (mongo.Collection, error) {
 	}
 
 	// Connect to collection
-	collection = *client.Database(os.Getenv("DATABSE_NAME")).Collection(os.Getenv("COLLECTION_NAME"))
+	collection = *client.Database(os.Getenv("DATABSE_NAME")).Collection(os.Getenv("COLLECTION_NAME_TASK"))
 
 	fmt.Println("Database connected")
 	return collection, nil

@@ -2,6 +2,7 @@ package router
 
 import (
 	"github/chera/task_manager/controller"
+	"github/chera/task_manager/middleware"
 
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -10,12 +11,12 @@ import (
 func Routers(collection *mongo.Collection) {
 	router := gin.Default()
 	taskController := controller.NewTaskController(collection)
+	myMiddleWare := middleware.NewMiddleWare()
+	router.GET("/tasks", myMiddleWare.CheckValidity("user"), taskController.GetTasks)
+	router.GET("/tasks/:id", myMiddleWare.CheckValidity("user"), taskController.GetTasks)
 
-	router.GET("/tasks", taskController.GetTasks)
-	router.GET("/tasks/:id", taskController.GetTasks)
-
-	router.POST("/tasks", taskController.AddTask)
-	router.DELETE("/tasks/:id", taskController.RemoveTask)
-	router.PUT("/tasks", taskController.UpdateTask)
+	router.POST("/tasks", myMiddleWare.CheckValidity("admin"), taskController.AddTask)
+	router.DELETE("/tasks/:id", myMiddleWare.CheckValidity("admin"), taskController.RemoveTask)
+	router.PUT("/tasks", myMiddleWare.CheckValidity("admin"), taskController.UpdateTask)
 	router.Run()
 }
