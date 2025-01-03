@@ -74,7 +74,7 @@ func NewMiddleWare() MiddleWare {
 }
 
 func (m *MiddleWare) GenerateToken(user models.User) (string, error) {
-	token := jwt.NewWithClaims(jwt.SigningMethodES256, jwt.MapClaims{
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"id":    user.ID,
 		"email": user.Email,
 		"role":  user.Role,
@@ -82,7 +82,7 @@ func (m *MiddleWare) GenerateToken(user models.User) (string, error) {
 		"exp":   time.Now().Add(24 * time.Hour).Unix(),
 	})
 
-	tokenString, err := token.SignedString(os.Getenv("JWT_KEY"))
+	tokenString, err := token.SignedString([]byte(os.Getenv("JWT_KEY")))
 
 	if err != nil {
 		return "", err

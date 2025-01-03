@@ -106,9 +106,46 @@ func (tc *TaskController) GetTasks(c *gin.Context) {
 }
 
 func (tc *TaskController) RegisterUser(c *gin.Context) {
+	var user models.User
 
+	if err := c.BindJSON(&user); err != nil {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{
+			"message": "bad request body format, " + err.Error(),
+		})
+		return
+	}
+
+	_, err := tc.UserService.RegisterUser(user)
+
+	if err != nil {
+		c.IndentedJSON(http.StatusConflict, gin.H{
+			"message": err.Error(),
+		})
+		return
+	}
+
+	c.IndentedJSON(http.StatusOK, user)
 }
 
 func (tc *TaskController) LoginUser(c *gin.Context) {
+	var user models.User
 
+	if err := c.BindJSON(&user); err != nil {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{
+			"message": "bad request body format, " + err.Error(),
+		})
+		return
+	}
+
+	token, err := tc.UserService.LoginUser(user)
+
+	if err != nil {
+		c.IndentedJSON(http.StatusNotFound, gin.H{
+			"message": err.Error(),
+		})
+		return
+
+	}
+
+	c.IndentedJSON(http.StatusOK, gin.H{"token": token})
 }

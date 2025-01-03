@@ -12,6 +12,9 @@ func Routers(taskCollection, userCollection *mongo.Collection) {
 	router := gin.Default()
 	taskController := controller.NewTaskController(taskCollection, userCollection)
 	myMiddleWare := middleware.NewMiddleWare()
+
+	router.POST("/register", taskController.RegisterUser)
+	router.POST("/login", taskController.LoginUser)
 	router.GET("/tasks", myMiddleWare.CheckValidity("user"), taskController.GetTasks)
 	router.GET("/tasks/:id", myMiddleWare.CheckValidity("user"), taskController.GetTasks)
 
