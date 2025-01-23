@@ -39,7 +39,7 @@ func (us *UserService) RegisterUser(user models.User) (models.User, error) {
 		return models.User{}, errors.New("user with these email exists")
 	}
 
-	result, err := us.Collection.Find(context.TODO(), bson.D{}, options.Find().SetLimit(1))
+	result, err := us.Collection.Find(context.TODO(), bson.D{}, options.Find().SetLimit(1)) // O(1)
 
 	if err != nil {
 		return models.User{}, err

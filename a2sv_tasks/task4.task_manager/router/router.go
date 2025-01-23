@@ -15,8 +15,8 @@ func Routers(taskCollection, userCollection *mongo.Collection) {
 
 	router.POST("/register", taskController.RegisterUser)
 	router.POST("/login", taskController.LoginUser)
-	router.GET("/tasks", myMiddleWare.CheckValidity("user"), taskController.GetTasks)
-	router.GET("/tasks/:id", myMiddleWare.CheckValidity("user"), taskController.GetTasks)
+	router.GET("/tasks", myMiddleWare.CheckValidity("any"), taskController.GetTasks)
+	router.GET("/tasks/:id", myMiddleWare.CheckValidity("any"), taskController.GetTasks)
 
 	router.POST("/tasks", myMiddleWare.CheckValidity("admin"), taskController.AddTask)
 	router.DELETE("/tasks/:id", myMiddleWare.CheckValidity("admin"), taskController.RemoveTask)

@@ -58,7 +58,7 @@ func (m *MiddleWare) CheckValidity(role string) gin.HandlerFunc {
 		if claims, ok := token.Claims.(jwt.MapClaims); ok {
 			r := claims["role"].(string)
 
-			if r != role {
+			if r != role && role != "any" {
 				c.AbortWithStatus(http.StatusUnauthorized)
 				return
 			}
